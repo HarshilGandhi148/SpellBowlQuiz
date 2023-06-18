@@ -4,9 +4,11 @@ from tkinter import *
 from tkinter import ttk
 from tkinter.ttk import Combobox
 from tkinter.font import Font
-import os
+import random
 
 engine = pyttsx3.init()
+engine.setProperty('rate',145)
+engine.setProperty('voice',"neutral")
 
 
 #words from list copied and pasted into sets of 100 (still needs to be cleaned)
@@ -63,7 +65,7 @@ def processString(wordString, wordList):
     sub = False
 
     for i in range(0, len(wordString)):
-        if not (wordString[i].isdigit()) and not (wordString[i] == ".") and not sub:
+        if not (wordString[i].isdigit()) and not (wordString[i] == ".") and not sub and not (wordString[i] == " "):
             subStart = i
             sub = True
         elif wordString[i].isdigit() and sub:
@@ -105,31 +107,91 @@ root = Tk()
 root.title("Spelling Quiz")
 score = 0
 total = 0
-index = 0
+currentIndex = 0
 currentList = []
 
 def setScore():
     global score
     global total
+    global currentList
+    global currentIndex
     strscore = "Score: " + str(score) + "/" + str(total)
     scoreLabel.config(text = strscore)
+    speakWord()
 
 def resetSession():
     global score
     global total
+    global index
     score = 0
     total = 0
+    index = 0
     setScore()
 
-def speakWord(word):
-    engine.say(word)
-    engine.runAndWait
+def speakWord():
+    global currentList
+    global currentIndex
+    engine.say(currentList[currentIndex])
+    engine.runAndWait()
 
 def setList():
-    return False
+    global currentList
+    match listDropdown.current():
+        case 0:
+            currentList = wordList100 + wordList200 + wordList300 + wordList400 + wordList500 + wordList600 + wordList700 + wordList800 + wordList900 + wordList1000 + wordList1100 + wordList1200 + wordList1300 + wordList1400 + wordList1500 + wordList1600 + wordList1700 + wordList1800 + wordList1900 + wordList2000 + wordList2100 + wordList2200
+        case 1:
+            currentList = wordList100.copy()
+        case 2:
+            currentList = wordList200.copy()
+        case 3:
+            currentList = wordList300.copy()
+        case 4:
+            currentList = wordList400.copy()
+        case 5:
+            currentList = wordList500.copy()
+        case 6:
+            currentList = wordList600.copy()
+        case 7:
+            currentList = wordList700.copy()
+        case 8:
+            currentList = wordList800.copy()
+        case 9:
+            currentList = wordList900.copy()
+        case 10:
+            currentList = wordList1000.copy()
+        case 11:
+            currentList = wordList1100.copy()
+        case 12:
+            currentList = wordList1200.copy()
+        case 13:
+            currentList = wordList1300.copy()
+        case 14:
+            currentList = wordList1400.copy()
+        case 15:
+            currentList = wordList1500.copy()
+        case 16:
+            currentList = wordList1600.copy()
+        case 17:
+            currentList = wordList1700.copy()
+        case 18:
+            currentList = wordList1800.copy()
+        case 19:
+            currentList = wordList1900.copy()
+        case 20:
+            currentList = wordList2000.copy()
+        case 21:
+            currentList = wordList2100.copy()
+        case 22:
+            currentList = wordList2200.copy()
+        case default:
+            print("Please select a list")
+
+    if (randomized.get() == 1):
+        random.shuffle(currentList)
+    resetSession()
 
 def checkWord():
-    return False
+    print(textInput.get())
 
 #width: 1707, height: 1067
 width = root.winfo_screenwidth()               
@@ -186,13 +248,14 @@ audioButton = Button(root, image = audio, bg = "#D8620F", activebackground = "#D
 audioButton.place(x=750, y=575)
 
 #randomize checkbox
-randomCheck = Checkbutton(root, text="Randomize", onvalue=1, offvalue=0, bg="#a74c0c", font = "serif 25 bold", command=setList, highlightcolor="white", activebackground="#a74c0c")
+randomized = IntVar()
+randomCheck = Checkbutton(root, text="Randomize", variable = randomized, bg="#a74c0c", font = "serif 25 bold", command=setList, highlightcolor="white", activebackground="#a74c0c")
 randomCheck.deselect()
 randomCheck.place(x=1125, y=400)
 
 #check button
-
-setList()
+checkButton = Button(root, text="Check", font = "serif 30 bold", activebackground = "#a74c0c", bd = 5, bg="#a74c0c", command=checkWord)
+checkButton.place(x=378.5, y=825, width=250, height=100)
 
 root.mainloop()
 
