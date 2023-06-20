@@ -1,15 +1,16 @@
-import pyttsx3
+from gtts import gTTS
+from io import BytesIO
+import pygame
 import tkinter
 from tkinter import *
 from tkinter import ttk
 from tkinter.ttk import Combobox
 from tkinter.font import Font
 import random
+import time
 
-engine = pyttsx3.init()
-engine.setProperty('rate',145)
-engine.setProperty('voice',"neutral")
-
+pygame.init()
+pygame.mixer.init()
 
 #words from list copied and pasted into sets of 100 (still needs to be cleaned)
 wordString100 = "1. a posteriori 2. a priori 3. abbacy 4. aberrant 5. abjection 6. abjectly 7. about-face 8. abrogated 9. absolutely 10. absolution 11. abstainer 12. Abu Dhabi 13. abundance 14. academician 15. acceptable 16. acclimation 17. accomplishment 18. accordance 19. accrual 20. acculturation 21. accusingly 22. accustom 23. Achilles 24. achingly 25. acoustically 26. acreage 27. activation 28. actively 29. acutely 30. ad infinitum 31. adenoid 32. Adirondack Mountains 33. adjacency 34. adjunctive 35. adjuration 36. admiralty 37. admonition 38. admonitory 39. adrenocorticosteroid 40. advance directive 41. adventuresome 42. advisedly 43. aeronautics 44. affiance 45. affidavit 46. affray 47. affront 48. aftereffect 49. agglutination 50. aggrandizement 51. aghast 52. agilely 53. agrarian 54. agreeability 55. air-condition 56. aisle 57. albeit 58. albino 59. aldermanic 60. alertly 61. alibiing 62. alkalinity 63. allegorize 64. allspice 65. alteration 66. altercate 67. alumnus 68. Amazon 69. amblyopia 70. amelioration 71. amiability 72. amnesia 73. amnesty 74. amortizing 75. ampoule 76. analgesic 77. anarchism 78. anchovy 79. anesthetize 80. Anglophile 81. Anglo-Saxon 82. animalcule 83. animalism 84. Annapolis 85. annunciation 86. answerable 87. antacid 88. antediluvian 89. antelope 90. anthropologist 91. antigen 92. antihistamine 93. antiquated 94. antiquating 95. antonym 96. Apache 97. aphoristic 98. apiarist 99. apocalyptic 100. apocrypha"
@@ -107,7 +108,9 @@ root = Tk()
 root.title("Spelling Quiz")
 score = 0
 total = 0
+counter = 0
 currentIndex = 0
+refresh = 0.25
 currentList = []
 
 def setScore():
@@ -117,6 +120,12 @@ def setScore():
     global currentIndex
     strscore = "Score: " + str(score) + "/" + str(total)
     scoreLabel.config(text = strscore)
+
+def reset():
+    setScore()
+    time.sleep(refresh)
+    textInput.delete(0, END)
+    showLabel(0)
     speakWord()
 
 def resetSession():
@@ -126,15 +135,20 @@ def resetSession():
     score = 0
     total = 0
     index = 0
-    setScore()
+    reset()
 
 def speakWord():
     global currentList
     global currentIndex
-    engine.say(currentList[currentIndex])
-    engine.runAndWait()
+    tts = gTTS(text=currentList[currentIndex], lang='en')
+    file = BytesIO()
+    tts.write_to_fp(file)
+    file.seek(0)
+    pygame.mixer.music.load(file)
+    pygame.mixer.music.play()
 
 def setList():
+    textInput.config(state="normal")
     global currentList
     match listDropdown.current():
         case 0:
@@ -184,6 +198,7 @@ def setList():
         case 22:
             currentList = wordList2200.copy()
         case default:
+            textInput.config(state="disabled")
             print("Please select a list")
 
     if (randomized.get() == 1):
@@ -191,7 +206,57 @@ def setList():
     resetSession()
 
 def checkWord():
-    print(textInput.get())
+    global score
+    global total
+    global currentIndex
+    global currentList
+    global counter
+    if counter == 0:
+        total += 1
+    if textInput.get() == currentList[currentIndex]:
+        increaseIndex()
+        showLabel(1)
+        if counter == 0:
+            score += 1
+        else:
+            counter = 0
+    else:
+        if counter == 0 or counter == 1:
+            showLabel(2)
+            counter += 1
+        elif counter == 2:
+            showLabel(3)
+            increaseIndex()
+            counter = 0
+    reset()
+
+def increaseIndex():
+    global currentIndex
+    global currentList
+    if currentIndex + 1 < len(currentList):
+        currentIndex += 1
+    else:
+        currentIndex = 0
+
+def showLabel(type):
+    global currentList
+    global currentIndex
+    print(type)
+    text = ""
+    match type:
+        case 0:
+            text = ""
+            correctLabel.config(fg="black")
+        case 1:
+            text = "Correct!"
+            correctLabel.config(fg="green")
+        case 2:
+            text = "Incorrect"
+            correctLabel.config(fg="red")
+        case 3:
+            text = "The word is: " + currentList[currentIndex]
+            correctLabel.config(fg="black")
+    correctLabel.config(text=text)
 
 #width: 1707, height: 1067
 width = root.winfo_screenwidth()               
@@ -199,7 +264,6 @@ height = root.winfo_screenheight()
 root.geometry("%dx%d" % (width, height))
 root.resizable(True, True)
 root.configure(bg="#D8620F")
-
 
 #icon
 icon = PhotoImage(file="Pencil.png")
@@ -220,7 +284,7 @@ Label(topFrame,image=icon, bg="white").place(x=45,y=50)
 Label(topFrame, text="SPELLING QUIZ", font="serif 50 bold", bg="white", fg ="black").place(x=182.5, y=87.5)
 
 #text input
-textInput = Entry(root, font=("sans serif",40), bg="white", highlightthickness = 7, highlightbackground = "black", highlightcolor = "black")
+textInput = Entry(root, font=("sans serif",40), bg="white", highlightthickness = 7, highlightbackground = "black", highlightcolor = "black", state = "disabled")
 textInput.place(x=153.5, y=700, width = 700, height = 100)
 
 #list dropdown title
@@ -241,6 +305,10 @@ listDropdown.bind('<<ComboboxSelected>>', lambda _ : setList())
 #score
 scoreLabel = Label(root, text="Score: 0/0", font="serif 30 bold", bg = "#D8620F", fg = "black")
 scoreLabel.place(x=160, y=500)
+
+#correct/incorrect label
+correctLabel = Label(root, text="", font="serif 30 bold", bg = "#D8620F", fg = "black")
+correctLabel.place(x=160, y=580)
 
 #audio button
 audio = PhotoImage(file="Audio Icon.png")
