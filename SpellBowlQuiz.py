@@ -293,6 +293,7 @@ def resize():
     
     title.config(font = ("serif", int(50*font_scale*scale), "bold"))
     text_input.config(font = ("serif", int(40*font_scale*scale)))
+    text_input.config(highlightthickness = int(7*font_scale*scale))
     list_dropdown_title.config(font = ("serif", int(25*font_scale*scale), "bold"))
     list_dropdown.config(font = ("serif", int(20*font_scale*scale)))
     font.config(family = "serif", size = int(20*font_scale*scale))
