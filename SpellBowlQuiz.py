@@ -104,6 +104,7 @@ from tkinter import *
 from tkinter import ttk
 from tkinter.ttk import Combobox
 from tkinter.font import Font
+from PIL import Image, ImageTk
 import random
 import time
 
@@ -111,7 +112,7 @@ import time
 root = Tk()
 root.title("Spelling Quiz")
 
-#width: 1707, height: 1067
+#width: 1707, height: 1067 - used for adjusting to any screen
 width = root.winfo_screenwidth()               
 height = root.winfo_screenheight()
 root.geometry("%dx%d" % (width, height))
@@ -124,8 +125,9 @@ total = 0
 counter = 0
 current_index = 0
 current_list = []
+font_scale = (((width*height)^2)/((1707*1067)^2))
 
-DELAY = 250
+DELAY = 200
 
 pygame.init()
 pygame.mixer.init()
@@ -278,74 +280,107 @@ def check_word():
             counter = 0
     reset()
 
+#allows window resizing (not perfect)
+def resize():
+    global new_audio, new_logo
+    scale = (((root.winfo_width()*root.winfo_height())^2)/((width*height)^2))
+    
+    new_logo = Image.open("Pencil.png")
+    new_logo = new_logo.resize(((int(125*font_scale*scale)),(int(125*font_scale*scale))), Image.LANCZOS)
+    new_logo = ImageTk.PhotoImage(new_logo)
+    logo.config(image = new_logo)
+    
+    title.config(font = ("serif", int(50*font_scale*scale), "bold"))
+    text_input.config(font = ("serif", int(40*font_scale*scale)))
+    list_dropdown_title.config(font = ("serif", int(25*font_scale*scale), "bold"))
+    list_dropdown.config(font = ("serif", int(20*font_scale*scale)))
+    font.config(family = "serif", size = int(20*font_scale*scale))
+    score_label.config(font = ("serif", int(30*font_scale*scale), "bold"))
+    correct_label.config(font = ("serif", int(30*font_scale*scale), "bold"))
+    
+    new_audio = Image.open("Audio Icon.png")
+    new_audio = new_audio.resize(((int(80*font_scale*scale)),(int(80*font_scale*scale))), Image.LANCZOS)
+    new_audio = ImageTk.PhotoImage(new_audio)
+    audio_button.config(image = new_audio)
+    
+    reset_button.config(font = ("serif", int(50*font_scale*scale), "bold"))
+    random_checkbox.config(font = ("serif", int(25*font_scale*scale), "bold"))
+    check_button.config(font = ("serif", int(30*font_scale*scale), "bold"))
+
 #icon
 icon = PhotoImage(file="Pencil.png")
 root.iconphoto(False, icon)
 
 #top frame
-top_frame = Frame(root, bg="white", width=1707, height=225)
-top_frame.place(x=0, y=0)
+top_frame = Frame(root, bg="white")
+top_frame.place(relx=0/1707, rely=0/1067, relwidth=1707/1707, relheight=225/1067)
 
 #side frame
-side_frame = Frame(root, bg="#a74c0c", width=700, height=842)
-side_frame.place(x=1007, y=225)
+side_frame = Frame(root, bg="#a74c0c")
+side_frame.place(relx=1007/1707, rely=225/1067, relwidth = 700/1707, relheight = 842/1067)
 
 #logo
-Label(top_frame,image=icon, bg="white").place(x=45,y=50)
+logo = Label(top_frame,image=icon, bg="white")
+logo.place(relx=45/1707, rely=50/1067)
 
 #title
-title = Label(top_frame, text="SPELLING QUIZ", font=("serif", 50, "bold"), bg="white", fg ="black")
-title.place(x=182.5, y=87.5)
+title = Label(root, text="SPELLING QUIZ", font=("serif", 50, "bold"), bg="white", fg ="black")
+title.place(relx=182.5/1707, rely=87.5/1067)
 
 #text input
-text_input = Entry(root, font=("sans serif", 40), bg="white", highlightthickness=7, highlightbackground="black", highlightcolor="black", state="disabled")
-text_input.place(x=153.5, y=700, width = 700, height = 100)
+text_input = Entry(root, font=("serif", 40), bg="white", highlightthickness=7, highlightbackground="black", highlightcolor="black", state="disabled")
+text_input.place(relx=153.5/1707, rely=700/1067, relwidth = 700/1707, relheight = 100/1067)
 
 #list dropdown title
-list_dropdown_title = Label(root, text="List Selection: ", font=("serif",25,"bold"), bg="#a74c0c", fg="black")
-list_dropdown_title.place(x=1125, y=300)
+list_dropdown_title = Label(root, text="List Selection: ", font=("serif", 25, "bold"), bg="#a74c0c", fg="black")
+list_dropdown_title.place(relx=1125/1707, rely=300/1067)
 
 #list dropdown
 list_values = ["All Words", "Words 1 - 100"]
 for j in range(1, 22):
     list_values.append("Words " + str(j*100+1) + " - " + str((j+1)*100))
-list_dropdown = Combobox(root, values=list_values, font=("sans serif", 20), state="readonly", justify="center")
+list_dropdown = Combobox(root, values=list_values, font=("serif", 20), state="readonly", justify="center")
 list_dropdown.set("Select Option")
-list_dropdown.place(x=1360, y=305, width = 300)
-font = Font(family = "sans serif", size = 20)
+list_dropdown.place(relx=1360/1707, rely=305/1067, relwidth = 300/1707, relheight = 50/1067)
+font = Font(family = "serif", size = 20)
 root.option_add("*TCombobox*Listbox*Font", font)
 root.option_add("*TCombobox*Listbox.Justify", "center")
 list_dropdown.bind('<<ComboboxSelected>>', lambda _ : set_list())
 
 #score
-score_label = Label(root, text="Score: 0/0", font=("serif",30,"bold"), bg = "#D8620F", fg = "black")
-score_label.place(x=160, y=500)
+score_label = Label(root, text="Score: 0/0", font=("serif", 30, "bold"), bg = "#D8620F", fg = "black")
+score_label.place(relx=160/1707, rely=500/1067)
 
 #correct/incorrect label
-correct_label = Label(root, text="", font="serif 30 bold", bg = "#D8620F", fg = "black")
-correct_label.place(x=160, y=580)
+correct_label = Label(root, text="", font= ("serif", 30, "bold"), bg = "#D8620F", fg = "black")
+correct_label.place(relx=160/1707, rely=580/1067)
 
 #audio button
-audio_image = PhotoImage(file="Audio Icon.png")
+audio_image = Image.open("Audio Icon.png")
+audio_image.resize((int(30*font_scale), int(30*font_scale)))
+audio_image = ImageTk.PhotoImage(audio_image)
 audio_button = Button(root, image = audio_image, bg = "#D8620F", activebackground = "#D8620F", bd = 0, command=speak_word)
-audio_button.place(x=750, y=575)
+audio_button.place(relx=750/1707, rely=575/1067)
 
 #reset button
-reset_button = Button(root, text="Reset", font=("serif", 50, "bold"), activebackground = "#D8620F", bd = 5, bg="#D8620F", command=set_list)
-reset_button.place(x=1207, y=750, width=300, height=150)
+reset_button = Button(root, text="Reset", font=("serif", int(50*font_scale), "bold"), activebackground = "#D8620F", bd = 5, bg="#D8620F", command=set_list)
+reset_button.place(relx=1207/1707, rely=750/1067, relwidth=300/1707, relheight=150/1067)
 
 #randomize checkbox
 randomized = IntVar()
-random_checkbox = Checkbutton(root, text="Randomize", variable = randomized, bg="#a74c0c", font = "serif 25 bold", command=set_list, highlightcolor="white", activebackground="#a74c0c")
+random_checkbox = Checkbutton(root, text="Randomize", variable = randomized, bg="#a74c0c", font = ("serif", 25, "bold"), command=set_list, highlightcolor="white", activebackground="#a74c0c")
 random_checkbox.deselect()
-random_checkbox.place(x=1125, y=400)
+random_checkbox.place(relx=1125/1707, rely=400/1067)
 
 #check button
 check_button = Button(root, text="Check", font=("serif",30,"bold"), activebackground = "#a74c0c", bd = 5, bg="#a74c0c", command=check_word)
-check_button.place(x=378.5, y=825, width=250, height=100)
+check_button.place(relx=378.5/1707, rely=825/1067, relwidth=250/1707, relheight=100/1067)
 
 #enter key
 root.bind("<Return>",lambda _ : check_word())
+
+#window resizing
+root.bind("<Configure>",lambda _ :  resize())
 
 root.mainloop()
 
