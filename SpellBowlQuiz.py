@@ -125,7 +125,8 @@ total = 0
 counter = 0
 current_index = 0
 current_list = []
-font_scale = (((width*height)^2)/((1707*1067)^2))
+#font_scale = (((width*height)^2)/((1707*1067)^2))
+font_scale = (width/1707 + height/1067)/2
 
 DELAY = 200
 
