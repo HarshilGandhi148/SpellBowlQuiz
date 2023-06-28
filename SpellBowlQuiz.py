@@ -128,31 +128,27 @@ current_list = []
 #font_scale = (((width*height)^2)/((1707*1067)^2))
 font_scale = (width/1707 + height/1067)/2
 
-DELAY = 200
+delay = 150
 
 pygame.init()
 pygame.mixer.init()
 
 #all functions
 def set_score():
-    global score
-    global total
-    global current_list
-    global current_index
+    global score, total, current_list, current_index
     str_score = "Score: " + str(score) + "/" + str(total)
     score_label.config(text = str_score)
 
 def reset():
+    global delay
     set_score()
     text_input.delete(0, END)
-    root.after(DELAY ,lambda:show_label(0))
-    root.after(DELAY ,lambda:speak_word())
+    root.after(delay ,lambda:show_label(0))
+    root.after(delay ,lambda:speak_word())
+    delay = 150
 
 def reset_session():
-    global score
-    global total
-    global current_index
-    global counter
+    global score, total, current_index, counter
     score = 0
     total = 0
     current_index = 0
@@ -160,8 +156,7 @@ def reset_session():
     reset()
 
 def speak_word():
-    global current_list
-    global current_index
+    global current_list, current_index
     tts = gTTS(text=current_list[current_index], lang='en')
     file = BytesIO()
     tts.write_to_fp(file)
@@ -228,8 +223,7 @@ def set_list():
     reset_session()
 
 def increase_index():
-    global current_index
-    global current_list
+    global current_index, current_list
     if current_index + 1 < len(current_list):
         current_index += 1
     else:
@@ -237,8 +231,7 @@ def increase_index():
 
 #{int} type: corresponds to text of label
 def show_label(type):
-    global current_list
-    global current_index
+    global current_list, current_index, delay
     text = ""
     match type:
         case 0:
@@ -251,17 +244,14 @@ def show_label(type):
             text = "Incorrect"
             correct_label.config(fg="red")
         case 3:
+            delay = 1000
             text = "The word is: " + current_list[current_index]
             correct_label.config(fg="black")
     correct_label.config(text=text)
     
 
 def check_word():
-    global score
-    global total
-    global current_index
-    global current_list
-    global counter
+    global score, total, current_index, current_list, counter
     if counter == 0:
         total += 1
     if text_input.get() == current_list[current_index]:
