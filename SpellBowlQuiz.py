@@ -167,61 +167,109 @@ def speak_word():
 def set_list():
     text_input.config(state="normal")
     global current_list
-    match list_dropdown.current():
-        case 0:
-            current_list = word_list_100 + word_list_200 + word_list_300 + word_list_400 + word_list_500 + word_list_600 + word_list_700 + word_list_800 + word_list_900 + word_list_1000 + word_list_1100 + word_list_1200 + word_list_1300 + word_list_1400 + word_list_1500 + word_list_1600 + word_list_1700 + word_list_1800 + word_list_1900 + word_list_2000 + word_list_2100 + word_list_2200
-        case 1:
-            current_list = word_list_100.copy()
-        case 2:
-            current_list = word_list_200.copy()
-        case 3:
-            current_list = word_list_300.copy()
-        case 4:
-            current_list = word_list_400.copy()
-        case 5:
-            current_list = word_list_500.copy()
-        case 6:
-            current_list = word_list_600.copy()
-        case 7:
-            current_list = word_list_700.copy()
-        case 8:
-            current_list = word_list_800.copy()
-        case 9:
-            current_list = word_list_900.copy()
-        case 10:
-            current_list = word_list_1000.copy()
-        case 11:
-            current_list = word_list_1100.copy()
-        case 12:
-            current_list = word_list_1200.copy()
-        case 13:
-            current_list = word_list_1300.copy()
-        case 14:
-            current_list = word_list_1400.copy()
-        case 15:
-            current_list = word_list_1500.copy()
-        case 16:
-            current_list = word_list_1600.copy()
-        case 17:
-            current_list = word_list_1700.copy()
-        case 18:
-            current_list = word_list_1800.copy()
-        case 19:
-            current_list = word_list_1900.copy()
-        case 20:
-            current_list = word_list_2000.copy()
-        case 21:
-            current_list = word_list_2100.copy()
-        case 22:
-            current_list = word_list_2200.copy()
-        case default:
+    current_list = word_list_100 + word_list_200 + word_list_300 + word_list_400 + word_list_500 + word_list_600 + word_list_700 + word_list_800 + word_list_900 + word_list_1000 + word_list_1100 + word_list_1200 + word_list_1300 + word_list_1400 + word_list_1500 + word_list_1600 + word_list_1700 + word_list_1800 + word_list_1900 + word_list_2000 + word_list_2100 + word_list_2200
+    if custom.get() == 0:
+        custom1.delete(0, END)
+        custom2.delete(0, END)
+        match list_dropdown.current():
+            case 0:
+               current_list = current_list
+               start_word()
+            case 1:
+                current_list = word_list_100.copy()
+                start_word()
+            case 2:
+                current_list = word_list_200.copy()
+                start_word()
+            case 3:
+                current_list = word_list_300.copy()
+                start_word()
+            case 4:
+                current_list = word_list_400.copy()
+                start_word()
+            case 5:
+                current_list = word_list_500.copy()
+                start_word()
+            case 6:
+                current_list = word_list_600.copy()
+                start_word()
+            case 7:
+                current_list = word_list_700.copy()
+                start_word()
+            case 8:
+                current_list = word_list_800.copy()
+                start_word()
+            case 9:
+                current_list = word_list_900.copy()
+                start_word()
+            case 10:
+                current_list = word_list_1000.copy()
+                start_word()
+            case 11:
+                current_list = word_list_1100.copy()
+                start_word()
+            case 12:
+                current_list = word_list_1200.copy()
+                start_word()
+            case 13:
+                current_list = word_list_1300.copy()
+                start_word()
+            case 14:
+                current_list = word_list_1400.copy()
+                start_word()
+            case 15:
+                current_list = word_list_1500.copy()
+                start_word()
+            case 16:
+                current_list = word_list_1600.copy()
+                start_word()
+            case 17:
+                current_list = word_list_1700.copy()
+                start_word()
+            case 18:
+                current_list = word_list_1800.copy()
+                start_word()
+            case 19:
+                current_list = word_list_1900.copy()
+                start_word()
+            case 20:
+                current_list = word_list_2000.copy()
+                start_word()
+            case 21:
+                current_list = word_list_2100.copy()
+                start_word()
+            case 22:
+                current_list = word_list_2200.copy()
+                start_word()
+            case default:
+                current_list = []
+                text_input.config(state="disabled")
+                print("Please select a list")
+                
+    elif custom.get() == 1:
+        if custom1.get().isdigit() and custom2.get().isdigit():
+            if int(custom1.get()) > 0 and int(custom2.get()) > 0 and int(custom1.get()) <= 2200 and int(custom2.get()) <= 2200 and int(custom1.get()) <= int(custom2.get()) and custom1.get() != "" and custom2.get() != "":
+                del current_list[: int(custom1.get())-1]
+                del current_list[int(custom2.get()) :]
+                list_dropdown.set("Select Option")
+                start_word()
+                
+        else:
+            current_list = []
             text_input.config(state="disabled")
-            print("Please select a list")
+            print("Please input a custom number")
 
+
+def start_word():
+    global current_list
     if (randomized.get() == 1):
         random.shuffle(current_list)
+
     reset_session()
 
+def custom_callback (var, index, mode):
+    set_list()
+     
 def increase_index():
     global current_index, current_list
     if current_index + 1 < len(current_list):
@@ -297,6 +345,9 @@ def resize():
     
     reset_button.config(font = ("serif", int(50*font_scale*scale), "bold"))
     random_checkbox.config(font = ("serif", int(25*font_scale*scale), "bold"))
+    custom_checkbox.config(font = ("serif", int(25*font_scale*scale), "bold"))
+    custom1.config(font = ("serif", int(20*font_scale*scale)))
+    custom2.config(font = ("serif", int(20*font_scale*scale)))
     check_button.config(font = ("serif", int(30*font_scale*scale), "bold"))
 
 #icon
@@ -358,11 +409,27 @@ audio_button.place(relx=750/1707, rely=575/1067)
 reset_button = Button(root, text="Reset", font=("serif", int(50*font_scale), "bold"), activebackground = "#D8620F", bd = 5, bg="#D8620F", command=set_list)
 reset_button.place(relx=1207/1707, rely=750/1067, relwidth=300/1707, relheight=150/1067)
 
+#custom checkbox
+custom = IntVar()
+custom_checkbox = Checkbutton(root, text="Custom:           -", state = "normal", variable = custom, bg="#a74c0c", font = ("serif", 25, "bold"), highlightcolor="white", activebackground="#a74c0c", command=set_list)
+custom_checkbox.deselect()
+custom_checkbox.place(relx=1125/1707, rely=385/1067)
+
+#custom text inputs
+c1 = StringVar()
+c2 = StringVar()
+c1.trace_add("write", custom_callback)
+c2.trace_add("write", custom_callback)
+custom1 = Entry(root, font=("serif", 20), bg="white", highlightthickness=0, highlightbackground="black", highlightcolor="black", textvariable = c1)
+custom1.place(relx=1300/1707, rely=395/1067, relwidth = 75/1707, relheight = 35/1067)
+custom2 = Entry(root, font=("serif", 20), bg="white", highlightthickness=0, highlightbackground="black", highlightcolor="black", textvariable = c2)
+custom2.place(relx=1405/1707, rely=395/1067, relwidth = 75/1707, relheight = 35/1067)
+
 #randomize checkbox
 randomized = IntVar()
 random_checkbox = Checkbutton(root, text="Randomize", variable = randomized, bg="#a74c0c", font = ("serif", 25, "bold"), command=set_list, highlightcolor="white", activebackground="#a74c0c")
 random_checkbox.deselect()
-random_checkbox.place(relx=1125/1707, rely=400/1067)
+random_checkbox.place(relx=1125/1707, rely=455/1067)
 
 #check button
 check_button = Button(root, text="Check", font=("serif",30,"bold"), activebackground = "#a74c0c", bd = 5, bg="#a74c0c", command=check_word)
