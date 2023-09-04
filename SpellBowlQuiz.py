@@ -115,9 +115,9 @@ root.title("Spelling Quiz")
 #width: 1707, height: 1067 - used for adjusting to any screen
 width = root.winfo_screenwidth()               
 height = root.winfo_screenheight()
+
 root.geometry("%dx%d" % (width, height))
 root.resizable(True, True)
-root.configure(bg="#D8620F")
 
 #initializes all variables
 score = 0
@@ -127,8 +127,11 @@ current_index = 0
 current_list = []
 #font_scale = (((width*height)^2)/((1707*1067)^2))
 font_scale = (width/1707 + height/1067)/2
-
 delay = 150
+ORANGE = "#D8620F"
+DARK_ORANGE = "#A74C0C"
+
+root.configure(bg=ORANGE)
 
 pygame.init()
 pygame.mixer.init()
@@ -359,7 +362,7 @@ top_frame = Frame(root, bg="white")
 top_frame.place(relx=0/1707, rely=0/1067, relwidth=1707/1707, relheight=225/1067)
 
 #side frame
-side_frame = Frame(root, bg="#a74c0c")
+side_frame = Frame(root, bg=DARK_ORANGE)
 side_frame.place(relx=1007/1707, rely=225/1067, relwidth = 700/1707, relheight = 842/1067)
 
 #logo
@@ -375,7 +378,7 @@ text_input = Entry(root, font=("serif", 40), bg="white", highlightthickness=7, h
 text_input.place(relx=153.5/1707, rely=700/1067, relwidth = 700/1707, relheight = 100/1067)
 
 #list dropdown title
-list_dropdown_title = Label(root, text="List Selection: ", font=("serif", 25, "bold"), bg="#a74c0c", fg="black")
+list_dropdown_title = Label(root, text="List Selection: ", font=("serif", 25, "bold"), bg=DARK_ORANGE, fg="black")
 list_dropdown_title.place(relx=1125/1707, rely=300/1067)
 
 #list dropdown
@@ -391,27 +394,27 @@ root.option_add("*TCombobox*Listbox.Justify", "center")
 list_dropdown.bind('<<ComboboxSelected>>', lambda _ : set_list())
 
 #score
-score_label = Label(root, text="Score: 0/0", font=("serif", 30, "bold"), bg = "#D8620F", fg = "black")
+score_label = Label(root, text="Score: 0/0", font=("serif", 30, "bold"), bg = ORANGE, fg = "black")
 score_label.place(relx=160/1707, rely=500/1067)
 
 #correct/incorrect label
-correct_label = Label(root, text="", font= ("serif", 30, "bold"), bg = "#D8620F", fg = "black")
+correct_label = Label(root, text="", font= ("serif", 30, "bold"), bg = ORANGE, fg = "black")
 correct_label.place(relx=160/1707, rely=580/1067)
 
 #audio button
 audio_image = Image.open("Audio Icon.png")
 audio_image.resize((int(30*font_scale), int(30*font_scale)))
 audio_image = ImageTk.PhotoImage(audio_image)
-audio_button = Button(root, image = audio_image, bg = "#D8620F", activebackground = "#D8620F", bd = 0, command=speak_word)
+audio_button = Button(root, image = audio_image, bg = ORANGE, activebackground = ORANGE, bd = 0, command=speak_word)
 audio_button.place(relx=750/1707, rely=575/1067)
 
 #reset button
-reset_button = Button(root, text="Reset", font=("serif", int(50*font_scale), "bold"), activebackground = "#D8620F", bd = 5, bg="#D8620F", command=set_list)
+reset_button = Button(root, text="Reset", font=("serif", int(50*font_scale), "bold"), activebackground = ORANGE, bd = 5, bg=ORANGE, command=set_list)
 reset_button.place(relx=1207/1707, rely=750/1067, relwidth=300/1707, relheight=150/1067)
 
 #custom checkbox
 custom = IntVar()
-custom_checkbox = Checkbutton(root, text="Custom:           -", state = "normal", variable = custom, bg="#a74c0c", font = ("serif", 25, "bold"), highlightcolor="white", activebackground="#a74c0c", command=set_list)
+custom_checkbox = Checkbutton(root, text="Custom:           -", state = "normal", variable = custom, bg=DARK_ORANGE, font = ("serif", 25, "bold"), highlightcolor="white", activebackground=DARK_ORANGE, command=set_list)
 custom_checkbox.deselect()
 custom_checkbox.place(relx=1125/1707, rely=385/1067)
 
@@ -427,12 +430,12 @@ custom2.place(relx=1405/1707, rely=395/1067, relwidth = 75/1707, relheight = 35/
 
 #randomize checkbox
 randomized = IntVar()
-random_checkbox = Checkbutton(root, text="Randomize", variable = randomized, bg="#a74c0c", font = ("serif", 25, "bold"), command=set_list, highlightcolor="white", activebackground="#a74c0c")
+random_checkbox = Checkbutton(root, text="Randomize", variable = randomized, bg=DARK_ORANGE, font = ("serif", 25, "bold"), command=set_list, highlightcolor="white", activebackground=DARK_ORANGE)
 random_checkbox.deselect()
 random_checkbox.place(relx=1125/1707, rely=455/1067)
 
 #check button
-check_button = Button(root, text="Check", font=("serif",30,"bold"), activebackground = "#a74c0c", bd = 5, bg="#a74c0c", command=check_word)
+check_button = Button(root, text="Check", font=("serif",30,"bold"), activebackground = DARK_ORANGE, bd = 5, bg=DARK_ORANGE, command=check_word)
 check_button.place(relx=378.5/1707, rely=825/1067, relwidth=250/1707, relheight=100/1067)
 
 #enter key
