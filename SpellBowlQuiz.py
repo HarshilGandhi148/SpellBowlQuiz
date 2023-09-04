@@ -172,6 +172,7 @@ def set_list():
     global current_list
     current_list = word_list_100 + word_list_200 + word_list_300 + word_list_400 + word_list_500 + word_list_600 + word_list_700 + word_list_800 + word_list_900 + word_list_1000 + word_list_1100 + word_list_1200 + word_list_1300 + word_list_1400 + word_list_1500 + word_list_1600 + word_list_1700 + word_list_1800 + word_list_1900 + word_list_2000 + word_list_2100 + word_list_2200
     if custom.get() == 0:
+        list_dropdown.config(state = "readonly")
         custom1.delete(0, END)
         custom2.delete(0, END)
         match list_dropdown.current():
@@ -250,10 +251,11 @@ def set_list():
                 print("Please select a list")
                 
     elif custom.get() == 1:
+        list_dropdown.config(state = "disabled")
         if custom1.get().isdigit() and custom2.get().isdigit():
             if int(custom1.get()) > 0 and int(custom2.get()) > 0 and int(custom1.get()) <= 2200 and int(custom2.get()) <= 2200 and int(custom1.get()) <= int(custom2.get()) and custom1.get() != "" and custom2.get() != "":
                 del current_list[: int(custom1.get())-1]
-                del current_list[int(custom2.get()) :]
+                del current_list[int(custom2.get()) - (int(custom1.get())-1) :]
                 list_dropdown.set("Select Option")
                 start_word()
                 
